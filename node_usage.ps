@@ -1,0 +1,10 @@
+cls
+""
+Write-Host "Disk Usage on Hyper-V Nodes" -ForegroundColor "black" -BackgroundColor "cyan"
+""
+Get-SCStorageVolume | Select-Object MountPoints, VolumeLabel, @{Name="VMHost";Expression={$_.VMHost.ToString().split('.')[0]}}, @{Name="Available (GB)";Expression={[Math]::Round($_.FreeSpace / 1Gb)}} | where {$_.VMHost -match "HW_NODE_1|HW_NODE_2|HW_NODE_3|HW_NODE_4|HW_NODE_5" -and $_.VolumeLabel -match "Array"} | Sort-Object "Available (GB)" | Format-Table -AutoSize
+""
+""
+Write-Host "Memory Usage on Hyper-V Nodes" -ForegroundColor "black" -BackgroundColor "cyan"
+""
+Get-VMHost | where {$_.ComputerName -match "HW_NODE_1|HW_NODE_2|HW_NODE_3|HW_NODE_4|HW_NODE_5"}  | Select-Object ComputerName, @{Name="FreeMem(GB)";Expression={[Math]::Round($_.AvailableMemory / 1Kb)}} | Sort-Object "FreeMem(GB)" | Format-Table -AutoSize
